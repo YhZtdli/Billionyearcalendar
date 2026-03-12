@@ -1,0 +1,666 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Billion Year Calendar</title>
+  <style>
+    :root {
+      --bg-a: #ffffff;
+      --bg-b: #f9f6ff;
+      --bg-c: #f1ebff;
+      --card: #ffffff;
+      --ink: #261a42;
+      --muted: #74649a;
+      --accent: #8b5cf6;
+      --accent-2: #7c4de0;
+      --accent-3: #6e3fcb;
+      --danger: #dc2626;
+      --border: #e2d9f3;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+
+    .wrap {
+      width: min(1640px, 100%);
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: 0 22px 56px rgba(72, 45, 126, 0.14);
+      overflow: hidden;
+      border: 1px solid #ffffffcc;
+    }
+
+    .head {
+      padding: 26px 34px;
+      background: linear-gradient(105deg, #7b4de2, #8b5cf6 54%, #a07cff);
+      color: #fff;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .head-left {
+      min-width: 0;
+    }
+
+    .head-title {
+      font-size: clamp(34px, 3.8vw, 56px);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin: 0;
+      text-shadow: 0 3px 10px rgba(45, 28, 72, 0.2);
+    }
+
+    .head-sub {
+      margin: 6px 0 0;
+      opacity: 0.92;
+      font-size: clamp(14px, 1.8vw, 19px);
+    }
+
+    .brand-mark {
+      margin-top: 2px;
+      font-size: clamp(38px, 4.6vw, 68px);
+      font-weight: 900;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      line-height: 1;
+      color: #fff;
+      -webkit-text-stroke: 1px #efe7ff;
+      text-align: right;
+      text-shadow:
+        0 1px 0 #f1e9ff,
+        0 2px 0 #deceff,
+        0 3px 0 #c8b0ff,
+        0 4px 0 #ae8bff,
+        0 5px 0 #8f67e8,
+        0 14px 22px rgba(56, 26, 116, 0.34);
+      filter: drop-shadow(0 2px 8px rgba(52, 25, 107, 0.2));
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      padding: 18px 24px 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 13px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+    }
+
+    .mode-btn {
+      background: #f5f0ff;
+      color: #472a86;
+    }
+
+    .mode-btn.active {
+      background: var(--accent-3);
+      color: #fff;
+      box-shadow: 0 8px 16px #7c4de030;
+    }
+
+    .calc-btn {
+      background: var(--accent-2);
+      color: #fff;
+      margin-top: 4px;
+      min-width: 180px;
+    }
+
+    .panel {
+      display: none;
+      padding: 24px 24px 30px;
+      animation: fadeIn .24s ease;
+    }
+
+    .panel.active { display: block; }
+
+    .hint {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+      letter-spacing: 0.15px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 13px 12px;
+      font-size: 16px;
+      background: #fff;
+      color: #0f172a;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #9a86c8;
+      box-shadow: 0 0 0 3px #9a86c833;
+    }
+
+    .result {
+      margin-top: 14px;
+      border-radius: 13px;
+      background: #faf7ff;
+      border: 1px solid #e7ddf8;
+      padding: 14px;
+      min-height: 56px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      font-size: 15px;
+    }
+
+    .err {
+      color: var(--danger);
+      font-weight: 700;
+      background: #fff1f2;
+      border-color: #fecdd3;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1100px) {
+      .grid, .grid-4 { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+      .head {
+        align-items: stretch;
+      }
+      .brand-mark {
+        font-size: clamp(30px, 5vw, 52px);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .wrap { border-radius: 16px; }
+      .head { padding: 18px 16px; }
+      .head {
+        flex-direction: column;
+      }
+      .brand-mark {
+        text-align: left;
+        letter-spacing: 5px;
+      }
+      .toolbar, .panel { padding-left: 16px; padding-right: 16px; }
+      .grid, .grid-4 { grid-template-columns: 1fr; }
+      .calc-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="head">
+      <div class="head-left">
+        <h1 class="head-title">Billion Year Calendar</h1>
+        <p class="head-sub">Arrow keys move between fields. Enter runs current calculation.</p>
+      </div>
+      <div class="brand-mark">ZASA</div>
+    </header>
+
+    <div class="toolbar">
+      <button id="btnModeA" class="mode-btn active" type="button">Mode A: Offset Date</button>
+      <button id="btnModeB" class="mode-btn" type="button">Mode B: Compare Dates</button>
+      <button id="btnModeC" class="mode-btn" type="button">Mode C: Weekday</button>
+    </div>
+
+    <section id="panelA" class="panel active">
+      <p class="hint">Use arrow keys to jump across cells. Press Enter to calculate.</p>
+      <div class="grid">
+        <div><label>Base Year</label><input id="a_base_y" data-nav-group="a" data-nav-row="0" data-nav-col="0" /></div>
+        <div><label>Base Month</label><input id="a_base_m" data-nav-group="a" data-nav-row="0" data-nav-col="1" /></div>
+        <div><label>Base Day</label><input id="a_base_d" data-nav-group="a" data-nav-row="0" data-nav-col="2" /></div>
+      </div>
+      <div class="grid-4">
+        <div>
+          <label>Direction</label>
+          <select id="a_dir" data-nav-group="a" data-nav-row="1" data-nav-col="0">
+            <option value="forward">forward</option>
+            <option value="backward">backward</option>
+          </select>
+        </div>
+        <div><label>Offset Years</label><input id="a_off_y" data-nav-group="a" data-nav-row="1" data-nav-col="1" /></div>
+        <div><label>Offset Months</label><input id="a_off_m" data-nav-group="a" data-nav-row="1" data-nav-col="2" /></div>
+        <div><label>Offset Days</label><input id="a_off_d" data-nav-group="a" data-nav-row="1" data-nav-col="3" /></div>
+      </div>
+      <button id="btnCalcA" class="calc-btn" type="button">Calculate A</button>
+      <div id="resA" class="result"></div>
+    </section>
+
+    <section id="panelB" class="panel">
+      <p class="hint">Arrow keys switch cells instantly. Press Enter to calculate.</p>
+      <div class="grid">
+        <div><label>First Year</label><input id="b_y1" data-nav-group="b" data-nav-row="0" data-nav-col="0" /></div>
+        <div><label>First Month</label><input id="b_m1" data-nav-group="b" data-nav-row="0" data-nav-col="1" /></div>
+        <div><label>First Day</label><input id="b_d1" data-nav-group="b" data-nav-row="0" data-nav-col="2" /></div>
+      </div>
+      <div class="grid">
+        <div><label>Second Year</label><input id="b_y2" data-nav-group="b" data-nav-row="1" data-nav-col="0" /></div>
+        <div><label>Second Month</label><input id="b_m2" data-nav-group="b" data-nav-row="1" data-nav-col="1" /></div>
+        <div><label>Second Day</label><input id="b_d2" data-nav-group="b" data-nav-row="1" data-nav-col="2" /></div>
+      </div>
+      <button id="btnCalcB" class="calc-btn" type="button">Calculate B</button>
+      <div id="resB" class="result"></div>
+    </section>
+
+    <section id="panelC" class="panel">
+      <p class="hint">Enter a date and get weekday instantly.</p>
+      <div class="grid">
+        <div><label>Year</label><input id="c_y" data-nav-group="c" data-nav-row="0" data-nav-col="0" /></div>
+        <div><label>Month</label><input id="c_m" data-nav-group="c" data-nav-row="0" data-nav-col="1" /></div>
+        <div><label>Day</label><input id="c_d" data-nav-group="c" data-nav-row="0" data-nav-col="2" /></div>
+      </div>
+      <button id="btnCalcC" class="calc-btn" type="button">Calculate C</button>
+      <div id="resC" class="result"></div>
+    </section>
+  </main>
+
+  <script>
+    function floorDiv(a, b) {
+      let q = a / b;
+      let r = a % b;
+      if (r < 0n) q -= 1n;
+      return q;
+    }
+
+    function mod7(x) {
+      let r = x % 7n;
+      if (r < 0n) r += 7n;
+      return r;
+    }
+
+    function weekdayNameFromSerial(serial) {
+      const names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const idx = Number(mod7(serial + 4n));
+      return names[idx];
+    }
+
+    function isLeapYear(y) {
+      return (y % 4n === 0n) && ((y % 100n !== 0n) || (y % 400n === 0n));
+    }
+
+    function daysInMonth(y, m) {
+      const md = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      if (m < 1 || m > 12) return 0;
+      if (m === 2 && isLeapYear(y)) return 29;
+      return md[m - 1];
+    }
+
+    function checkDate(y, m, d) {
+      const dim = daysInMonth(y, m);
+      return dim > 0 && d >= 1 && d <= dim;
+    }
+
+    function daysFromCivil(y, m, d) {
+      let yi = y - (m <= 2 ? 1n : 0n);
+      const era = floorDiv(yi, 400n);
+      const yoe = yi - era * 400n;
+      const doy = (153n * (BigInt(m) + (m > 2 ? -3n : 9n)) + 2n) / 5n + BigInt(d) - 1n;
+      const doe = yoe * 365n + yoe / 4n - yoe / 100n + doy;
+      return era * 146097n + doe - 719468n;
+    }
+
+    function civilFromDays(z) {
+      z += 719468n;
+      const era = floorDiv(z, 146097n);
+      const doe = z - era * 146097n;
+      const yoe = (doe - doe / 1460n + doe / 36524n - doe / 146096n) / 365n;
+      let y = yoe + era * 400n;
+      const doy = doe - (365n * yoe + yoe / 4n - yoe / 100n);
+      const mp = (5n * doy + 2n) / 153n;
+      const d = doy - (153n * mp + 2n) / 5n + 1n;
+      const m = mp + (mp < 10n ? 3n : -9n);
+      y += (m <= 2n ? 1n : 0n);
+      return { y, m: Number(m), d: Number(d) };
+    }
+
+    function addMonthsClamped(base, deltaMonths) {
+      const idx = base.y * 12n + BigInt(base.m - 1) + deltaMonths;
+      const ny = floorDiv(idx, 12n);
+      const nm0 = idx - ny * 12n;
+      const nm = Number(nm0) + 1;
+      const dim = daysInMonth(ny, nm);
+      const nd = Math.min(base.d, dim);
+      return { y: ny, m: nm, d: nd };
+    }
+
+    function parseBigIntInput(id) {
+      const raw = document.getElementById(id).value.trim();
+      if (raw === "") throw new Error("Please fill all required fields.");
+      if (!/^[+-]?\d+$/.test(raw)) throw new Error("Invalid integer: " + id);
+      return BigInt(raw);
+    }
+
+    function parseIntStrict(id) {
+      const raw = document.getElementById(id).value.trim();
+      if (raw === "") throw new Error("Please fill all required fields.");
+      if (!/^[+-]?\d+$/.test(raw)) throw new Error("Invalid integer: " + id);
+      return Number(raw);
+    }
+
+    function setResult(id, text, isErr = false) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.classList.toggle("err", isErr);
+    }
+
+    function calcA() {
+      try {
+        const base = {
+          y: parseBigIntInput("a_base_y"),
+          m: parseIntStrict("a_base_m"),
+          d: parseIntStrict("a_base_d")
+        };
+        if (!checkDate(base.y, base.m, base.d)) throw new Error("Base date is invalid.");
+
+        const dir = document.getElementById("a_dir").value;
+        const sign = dir === "forward" ? 1n : -1n;
+        const oy = parseBigIntInput("a_off_y");
+        const om = parseBigIntInput("a_off_m");
+        const od = parseBigIntInput("a_off_d");
+
+        const deltaMonths = sign * (oy * 12n + om);
+        const deltaDays = sign * od;
+
+        const afterYM = addMonthsClamped(base, deltaMonths);
+        const serial = daysFromCivil(afterYM.y, afterYM.m, afterYM.d);
+        const targetSerial = serial + deltaDays;
+        const ans = civilFromDays(targetSerial);
+        const weekday = weekdayNameFromSerial(targetSerial);
+
+        setResult("resA", `Result date:\n${ans.y.toString()} ${ans.m} ${ans.d}\nWeekday:\n${weekday}`);
+      } catch (e) {
+        setResult("resA", e.message, true);
+      }
+    }
+
+    function calcB() {
+      try {
+        const d1 = {
+          y: parseBigIntInput("b_y1"),
+          m: parseIntStrict("b_m1"),
+          d: parseIntStrict("b_d1")
+        };
+        const d2 = {
+          y: parseBigIntInput("b_y2"),
+          m: parseIntStrict("b_m2"),
+          d: parseIntStrict("b_d2")
+        };
+        if (!checkDate(d1.y, d1.m, d1.d)) throw new Error("First date is invalid.");
+        if (!checkDate(d2.y, d2.m, d2.d)) throw new Error("Second date is invalid.");
+
+        const s1 = daysFromCivil(d1.y, d1.m, d1.d);
+        const s2 = daysFromCivil(d2.y, d2.m, d2.d);
+
+        let order = "first and second are the same day";
+        if (s1 < s2) order = "first is before second";
+        if (s1 > s2) order = "first is after second";
+
+        const absDiff = s2 >= s1 ? (s2 - s1) : (s1 - s2);
+        const weeks = absDiff / 7n;
+        const days = absDiff % 7n;
+
+        setResult(
+          "resB",
+          `Order:\n${order}\nDistance in days:\n${absDiff.toString()}\nWeeks + days:\n${weeks.toString()} weeks + ${days.toString()} days`
+        );
+      } catch (e) {
+        setResult("resB", e.message, true);
+      }
+    }
+
+    function calcC() {
+      try {
+        const y = parseBigIntInput("c_y");
+        const m = parseIntStrict("c_m");
+        const d = parseIntStrict("c_d");
+        if (!checkDate(y, m, d)) throw new Error("Date is invalid.");
+
+        const serial = daysFromCivil(y, m, d);
+        const weekday = weekdayNameFromSerial(serial);
+        setResult("resC", `Weekday:\n${weekday}`);
+      } catch (e) {
+        setResult("resC", e.message, true);
+      }
+    }
+
+    function setMode(mode) {
+      const a = mode === "a";
+      const b = mode === "b";
+      const c = mode === "c";
+      document.getElementById("panelA").classList.toggle("active", a);
+      document.getElementById("panelB").classList.toggle("active", b);
+      document.getElementById("panelC").classList.toggle("active", c);
+      document.getElementById("btnModeA").classList.toggle("active", a);
+      document.getElementById("btnModeB").classList.toggle("active", b);
+      document.getElementById("btnModeC").classList.toggle("active", c);
+    }
+
+    const modeOrder = ["a", "b", "c"];
+
+    function currentMode() {
+      if (document.getElementById("panelA").classList.contains("active")) return "a";
+      if (document.getElementById("panelB").classList.contains("active")) return "b";
+      return "c";
+    }
+
+    function setModeOnly(mode) {
+      setMode(mode);
+    }
+
+    function switchModeByDelta(delta) {
+      const cur = currentMode();
+      const idx = modeOrder.indexOf(cur);
+      const next = modeOrder[(idx + delta + modeOrder.length) % modeOrder.length];
+      setModeOnly(next);
+    }
+
+    function moveFocus(group, row, col) {
+      const target = document.querySelector(
+        `[data-nav-group="${group}"][data-nav-row="${row}"][data-nav-col="${col}"]`
+      );
+      if (target) {
+        target.focus();
+        if (target.select && target.tagName === "INPUT") target.select();
+      }
+      return !!target;
+    }
+
+    function fallbackMove(group, row, col, dr, dc) {
+      for (let i = 0; i < 12; i++) {
+        row += dr;
+        col += dc;
+        if (moveFocus(group, row, col)) return;
+      }
+    }
+
+    function onNavKey(e) {
+      const key = e.key;
+      const el = e.target;
+      const isField = (el instanceof HTMLInputElement || el instanceof HTMLSelectElement);
+      if (isField && (key === "ArrowLeft" || key === "ArrowRight")) {
+        const g = el.dataset.navGroup;
+        if (g && g !== currentMode()) {
+          e.preventDefault();
+          switchModeByDelta(key === "ArrowRight" ? 1 : -1);
+          return;
+        }
+      }
+      if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement) &&
+          (key === "ArrowLeft" || key === "ArrowRight")) {
+        e.preventDefault();
+        switchModeByDelta(key === "ArrowRight" ? 1 : -1);
+        return;
+      }
+      if ((e.ctrlKey || e.altKey) && (key === "ArrowLeft" || key === "PageUp")) {
+        e.preventDefault();
+        switchModeByDelta(-1);
+        return;
+      }
+      if ((e.ctrlKey || e.altKey) && (key === "ArrowRight" || key === "PageDown")) {
+        e.preventDefault();
+        switchModeByDelta(1);
+        return;
+      }
+      if ((e.altKey || e.ctrlKey) && ["1", "2", "3"].includes(key)) {
+        e.preventDefault();
+        setModeOnly(modeOrder[Number(key) - 1]);
+        return;
+      }
+
+      if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement)) return;
+      const group = el.dataset.navGroup;
+      if (!group || group !== currentMode()) return;
+
+      if (key === "Enter") {
+        e.preventDefault();
+        if (group === "a") calcA();
+        if (group === "b") calcB();
+        if (group === "c") calcC();
+        return;
+      }
+
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(key)) return;
+      e.preventDefault();
+      let row = Number(el.dataset.navRow);
+      let col = Number(el.dataset.navCol);
+
+      if (key === "ArrowLeft") {
+        if (!moveFocus(group, row, col - 1)) fallbackMove(group, row, col, 0, -1);
+      }
+      if (key === "ArrowRight") {
+        if (!moveFocus(group, row, col + 1)) fallbackMove(group, row, col, 0, 1);
+      }
+      if (key === "ArrowUp") {
+        if (row === 0) {
+          const btn = document.getElementById(
+            group === "a" ? "btnModeA" : (group === "b" ? "btnModeB" : "btnModeC")
+          );
+          if (btn) btn.focus();
+        } else if (!moveFocus(group, row - 1, col)) {
+          fallbackMove(group, row, col, -1, 0);
+        }
+      }
+      if (key === "ArrowDown") {
+        if (!moveFocus(group, row + 1, col)) fallbackMove(group, row, col, 1, 0);
+      }
+    }
+
+    document.addEventListener("keydown", onNavKey);
+
+    document.getElementById("btnModeA").addEventListener("click", () => {
+      setModeOnly("a");
+    });
+    document.getElementById("btnModeB").addEventListener("click", () => {
+      setModeOnly("b");
+    });
+    document.getElementById("btnModeC").addEventListener("click", () => {
+      setModeOnly("c");
+    });
+
+    let lastWheelAt = 0;
+    function onModeWheel(e) {
+      const now = Date.now();
+      if (now - lastWheelAt < 120) return;
+      if (Math.abs(e.deltaY) < 4) return;
+      e.preventDefault();
+      switchModeByDelta(e.deltaY > 0 ? 1 : -1);
+      lastWheelAt = now;
+    }
+
+    const modeWheelArea = document.querySelector(".wrap");
+    modeWheelArea.addEventListener("wheel", onModeWheel, { passive: false });
+
+    document.getElementById("btnCalcA").addEventListener("click", calcA);
+    document.getElementById("btnCalcB").addEventListener("click", calcB);
+    document.getElementById("btnCalcC").addEventListener("click", calcC);
+
+    function onModeButtonKey(e) {
+      const id = e.currentTarget.id;
+      const mode = id === "btnModeA" ? "a" : (id === "btnModeB" ? "b" : "c");
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        e.stopPropagation();
+        switchModeByDelta(-1);
+        const cur = currentMode();
+        document.getElementById(cur === "a" ? "btnModeA" : (cur === "b" ? "btnModeB" : "btnModeC")).focus();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        e.stopPropagation();
+        switchModeByDelta(1);
+        const cur = currentMode();
+        document.getElementById(cur === "a" ? "btnModeA" : (cur === "b" ? "btnModeB" : "btnModeC")).focus();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        e.stopPropagation();
+        moveFocus(mode, 0, 0);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        setModeOnly(mode);
+      }
+    }
+
+    document.getElementById("btnModeA").addEventListener("keydown", onModeButtonKey);
+    document.getElementById("btnModeB").addEventListener("keydown", onModeButtonKey);
+    document.getElementById("btnModeC").addEventListener("keydown", onModeButtonKey);
+
+    setResult("resA", "Fill in all fields, then click Calculate A.");
+    setResult("resB", "Fill in all fields, then click Calculate B.");
+    setResult("resC", "Fill in all fields, then click Calculate C.");
+  </script>
+</body>
+</html>
