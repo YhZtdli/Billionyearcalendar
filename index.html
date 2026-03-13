@@ -83,7 +83,7 @@
 
     .brand-mark {
       margin-top: 2px;
-      font-size: clamp(38px, 4.6vw, 68px);
+      font-size: clamp(46px, 5.4vw, 84px);
       font-weight: 900;
       letter-spacing: 7px;
       text-transform: uppercase;
@@ -159,7 +159,6 @@
       --start: 0deg;
       transform: rotate(var(--start));
       animation: orbit-spin 6.2s linear infinite;
-      animation-play-state: paused;
     }
 
     .orbiter::after {
@@ -178,11 +177,6 @@
     .orbiter-1 { width: 62px; height: 62px; top: 45px; left: 45px; --start: 18deg; }
     .orbiter-2 { width: 98px; height: 98px; top: 27px; left: 27px; --start: 142deg; }
     .orbiter-3 { width: 134px; height: 134px; top: 9px; left: 9px; --start: 258deg; }
-
-    .orbit-scene:hover .orbiter,
-    .orbit-scene:focus-within .orbiter {
-      animation-play-state: running;
-    }
 
     .toolbar {
       display: flex;
