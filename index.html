@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Billion Year Calendar</title>
+  <title>亿年历 Billion Year Calendar</title>
+  <meta name="description" content="亿年历 Billion Year Calendar：支持超大跨度日期偏移计算、日期比较、星期查询与今日快速填充。" />
   <style>
     :root {
       --bg-a: #ffffff;
@@ -65,6 +66,121 @@
       align-items: center;
       gap: 18px;
       margin-left: auto;
+    }
+
+    .analog-clock {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 2px solid #ffffffdd;
+      box-shadow: inset 0 0 0 1px #ffffff66, 0 4px 10px rgba(35, 16, 77, 0.2);
+      background: radial-gradient(circle at 50% 45%, #ffffff29, #ffffff12 64%, #ffffff08);
+      flex: 0 0 auto;
+    }
+
+    .date-card {
+      min-width: 142px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #ffffffcc;
+      background: #ffffff1c;
+      color: #fff;
+      box-shadow: inset 0 0 0 1px #ffffff40;
+      text-align: center;
+      line-height: 1.2;
+      flex: 0 0 auto;
+    }
+
+    .date-label {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      opacity: 0.92;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .date-main {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-shadow: 0 1px 4px rgba(38, 19, 86, 0.3);
+    }
+
+    .date-sub {
+      margin-top: 5px;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 0.95;
+    }
+
+    .clock-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #fff;
+      z-index: 6;
+    }
+
+    .clock-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(40, 18, 86, 0.35);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .n12 { transform: translate(-50%, -50%) translateY(-61px); }
+    .n1  { transform: translate(-50%, -50%) translate(31px, -53px); }
+    .n2  { transform: translate(-50%, -50%) translate(53px, -31px); }
+    .n3  { transform: translate(-50%, -50%) translateX(61px); }
+    .n4  { transform: translate(-50%, -50%) translate(53px, 31px); }
+    .n5  { transform: translate(-50%, -50%) translate(31px, 53px); }
+    .n6  { transform: translate(-50%, -50%) translateY(61px); }
+    .n7  { transform: translate(-50%, -50%) translate(-31px, 53px); }
+    .n8  { transform: translate(-50%, -50%) translate(-53px, 31px); }
+    .n9  { transform: translate(-50%, -50%) translateX(-61px); }
+    .n10 { transform: translate(-50%, -50%) translate(-53px, -31px); }
+    .n11 { transform: translate(-50%, -50%) translate(-31px, -53px); }
+
+    .clock-hand {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 50% calc(100% - 8px);
+      border-radius: 10px;
+      z-index: 4;
+    }
+
+    .clock-hour {
+      width: 4px;
+      height: 34px;
+      background: #fff;
+      transform: translate(-50%, -76%) rotate(0deg);
+    }
+
+    .clock-minute {
+      width: 3px;
+      height: 48px;
+      background: #ffffffef;
+      transform: translate(-50%, -82%) rotate(0deg);
+    }
+
+    .clock-second {
+      width: 2px;
+      height: 54px;
+      background: #fef08a;
+      transform: translate(-50%, -85%) rotate(0deg);
+      z-index: 5;
     }
 
     .head-title {
@@ -220,6 +336,20 @@
       min-width: 180px;
     }
 
+    .today-btn {
+      background: #efe7ff;
+      color: #4a2f86;
+      margin-top: 4px;
+      min-width: 130px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     .panel {
       display: none;
       padding: 24px 24px 30px;
@@ -311,6 +441,32 @@
       .head-right {
         gap: 10px;
       }
+      .analog-clock {
+        width: 116px;
+        height: 116px;
+      }
+      .date-card {
+        min-width: 120px;
+        padding: 9px 11px;
+      }
+      .date-main { font-size: 20px; }
+      .date-sub { font-size: 13px; }
+      .clock-hour { height: 28px; }
+      .clock-minute { height: 38px; }
+      .clock-second { height: 44px; }
+      .clock-number { font-size: 9px; }
+      .n12 { transform: translate(-50%, -50%) translateY(-50px); }
+      .n1  { transform: translate(-50%, -50%) translate(25px, -43px); }
+      .n2  { transform: translate(-50%, -50%) translate(43px, -25px); }
+      .n3  { transform: translate(-50%, -50%) translateX(50px); }
+      .n4  { transform: translate(-50%, -50%) translate(43px, 25px); }
+      .n5  { transform: translate(-50%, -50%) translate(25px, 43px); }
+      .n6  { transform: translate(-50%, -50%) translateY(50px); }
+      .n7  { transform: translate(-50%, -50%) translate(-25px, 43px); }
+      .n8  { transform: translate(-50%, -50%) translate(-43px, 25px); }
+      .n9  { transform: translate(-50%, -50%) translateX(-50px); }
+      .n10 { transform: translate(-50%, -50%) translate(-43px, -25px); }
+      .n11 { transform: translate(-50%, -50%) translate(-25px, -43px); }
       .orbit-scene {
         width: 118px;
         height: 118px;
@@ -352,10 +508,33 @@
   <main class="wrap">
     <header class="head">
       <div class="head-left">
-        <h1 class="head-title">Billion Year Calendar</h1>
+        <h1 class="head-title">亿年历 Billion Year Calendar</h1>
         <p class="head-sub">Arrow keys move between fields. Enter runs current calculation.</p>
       </div>
       <div class="head-right">
+        <div class="analog-clock" aria-label="Current local time analog clock">
+          <div class="clock-number n12">12</div>
+          <div class="clock-number n1">1</div>
+          <div class="clock-number n2">2</div>
+          <div class="clock-number n3">3</div>
+          <div class="clock-number n4">4</div>
+          <div class="clock-number n5">5</div>
+          <div class="clock-number n6">6</div>
+          <div class="clock-number n7">7</div>
+          <div class="clock-number n8">8</div>
+          <div class="clock-number n9">9</div>
+          <div class="clock-number n10">10</div>
+          <div class="clock-number n11">11</div>
+          <div id="clockHour" class="clock-hand clock-hour"></div>
+          <div id="clockMinute" class="clock-hand clock-minute"></div>
+          <div id="clockSecond" class="clock-hand clock-second"></div>
+          <div class="clock-dot"></div>
+        </div>
+        <div class="date-card" aria-label="Current local date">
+          <div class="date-label">Today</div>
+          <div id="dateMain" class="date-main">----</div>
+          <div id="dateSub" class="date-sub">--/--</div>
+        </div>
         <div class="orbit-scene" aria-label="Orbital decoration">
           <div class="orbit-core"></div>
           <div class="orbit-ring ring-1"></div>
@@ -398,7 +577,10 @@
         <div><label>Offset Months</label><input id="a_off_m" data-nav-group="a" data-nav-row="1" data-nav-col="2" /></div>
         <div><label>Offset Days</label><input id="a_off_d" data-nav-group="a" data-nav-row="1" data-nav-col="3" /></div>
       </div>
-      <button id="btnCalcA" class="calc-btn" type="button">Calculate A</button>
+      <div class="action-row">
+        <button id="btnTodayA" class="today-btn" type="button">Today</button>
+        <button id="btnCalcA" class="calc-btn" type="button">Calculate A</button>
+      </div>
       <div id="resA" class="result"></div>
     </section>
 
@@ -414,7 +596,10 @@
         <div><label>Second Month</label><input id="b_m2" data-nav-group="b" data-nav-row="1" data-nav-col="1" /></div>
         <div><label>Second Day</label><input id="b_d2" data-nav-group="b" data-nav-row="1" data-nav-col="2" /></div>
       </div>
-      <button id="btnCalcB" class="calc-btn" type="button">Calculate B</button>
+      <div class="action-row">
+        <button id="btnTodayB" class="today-btn" type="button">Today</button>
+        <button id="btnCalcB" class="calc-btn" type="button">Calculate B</button>
+      </div>
       <div id="resB" class="result"></div>
     </section>
 
@@ -425,7 +610,10 @@
         <div><label>Month</label><input id="c_m" data-nav-group="c" data-nav-row="0" data-nav-col="1" /></div>
         <div><label>Day</label><input id="c_d" data-nav-group="c" data-nav-row="0" data-nav-col="2" /></div>
       </div>
-      <button id="btnCalcC" class="calc-btn" type="button">Calculate C</button>
+      <div class="action-row">
+        <button id="btnTodayC" class="today-btn" type="button">Today</button>
+        <button id="btnCalcC" class="calc-btn" type="button">Calculate C</button>
+      </div>
       <div id="resC" class="result"></div>
     </section>
   </main>
@@ -517,6 +705,65 @@
       const el = document.getElementById(id);
       el.textContent = text;
       el.classList.toggle("err", isErr);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours() % 12;
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      const ms = now.getMilliseconds();
+      const hourDeg = (h + m / 60 + s / 3600) * 30;
+      const minuteDeg = (m + (s + ms / 1000) / 60) * 6;
+      const secondDeg = (s + ms / 1000) * 6;
+      const hourEl = document.getElementById("clockHour");
+      const minuteEl = document.getElementById("clockMinute");
+      const secondEl = document.getElementById("clockSecond");
+      if (hourEl && minuteEl && secondEl) {
+        hourEl.style.transform = `translate(-50%, -76%) rotate(${hourDeg}deg)`;
+        minuteEl.style.transform = `translate(-50%, -82%) rotate(${minuteDeg}deg)`;
+        secondEl.style.transform = `translate(-50%, -85%) rotate(${secondDeg}deg)`;
+      }
+
+      const dateMainEl = document.getElementById("dateMain");
+      const dateSubEl = document.getElementById("dateSub");
+      if (dateMainEl && dateSubEl) {
+        const y = now.getFullYear();
+        const mon = now.getMonth() + 1;
+        const day = now.getDate();
+        dateMainEl.textContent = `${y}`;
+        dateSubEl.textContent = `${String(mon).padStart(2, "0")}/${String(day).padStart(2, "0")}`;
+      }
+    }
+
+    function getTodayParts() {
+      const now = new Date();
+      return {
+        y: now.getFullYear(),
+        m: now.getMonth() + 1,
+        d: now.getDate()
+      };
+    }
+
+    function fillTodayA() {
+      const t = getTodayParts();
+      document.getElementById("a_base_y").value = String(t.y);
+      document.getElementById("a_base_m").value = String(t.m);
+      document.getElementById("a_base_d").value = String(t.d);
+    }
+
+    function fillTodayB() {
+      const t = getTodayParts();
+      document.getElementById("b_y1").value = String(t.y);
+      document.getElementById("b_m1").value = String(t.m);
+      document.getElementById("b_d1").value = String(t.d);
+    }
+
+    function fillTodayC() {
+      const t = getTodayParts();
+      document.getElementById("c_y").value = String(t.y);
+      document.getElementById("c_m").value = String(t.m);
+      document.getElementById("c_d").value = String(t.d);
     }
 
     function calcA() {
@@ -749,6 +996,9 @@
     document.getElementById("btnCalcA").addEventListener("click", calcA);
     document.getElementById("btnCalcB").addEventListener("click", calcB);
     document.getElementById("btnCalcC").addEventListener("click", calcC);
+    document.getElementById("btnTodayA").addEventListener("click", fillTodayA);
+    document.getElementById("btnTodayB").addEventListener("click", fillTodayB);
+    document.getElementById("btnTodayC").addEventListener("click", fillTodayC);
 
     function onModeButtonKey(e) {
       const id = e.currentTarget.id;
@@ -783,6 +1033,8 @@
     setResult("resA", "Fill in all fields, then click Calculate A.");
     setResult("resB", "Fill in all fields, then click Calculate B.");
     setResult("resC", "Fill in all fields, then click Calculate C.");
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
